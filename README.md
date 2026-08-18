@@ -1,63 +1,38 @@
-# SearchStack SDKs
+# SearchStack.PublicApi
 
-Official client libraries for [SearchStack](https://searchstack.dev) — a hosted search API where
-full-text, vector, geo and image search all run over the same JSON endpoint, and relevance is
-something you can measure rather than guess at.
+Typed, `HttpClient`-based .NET client for the [SearchStack](https://searchstack.dev) API — full-text,
+vector, geo and image search over one JSON endpoint, with relevance you can measure.
 
-| Package | Language | Install |
-|---|---|---|
-| [`@searchstack/public-api`](./packages/public-api) | TypeScript / JavaScript | `npm install @searchstack/public-api` |
-| [`@searchstack/autocomplete`](./packages/autocomplete) | Browser (framework-agnostic) | `npm install @searchstack/autocomplete` |
-| [`SearchStack.PublicApi`](./dotnet/SearchStack.PublicApi) | .NET | `dotnet add package SearchStack.PublicApi` |
-
-## Quick start
-
-```ts
-import { SearchStackClient } from "@searchstack/public-api";
-
-const client = new SearchStackClient({ apiKey: process.env.SEARCHSTACK_API_KEY });
-const results = await client.search.list("movies", { query: "heist", limit: 10 });
+```bash
+dotnet add package SearchStack.PublicApi
 ```
 
 ```csharp
-var client = new SearchStackClient(new ApiKeyCredentials("YOUR_API_KEY"));
-var results = await client.SearchListAsync("movies", new SearchRequest { Query = "heist" });
+using SearchStack.PublicApi;
+
+var client = new SearchStackClient("sk_live_...");
+
+var result = await client.Search.SearchListAsync("acme", "movies", 1,
+    new SearchOptions { Query = "heist", Size = 10 });
 ```
 
-Each package has its own README with the full surface.
+Targets `net8.0` and `netstandard2.0`. The full surface is documented in
+[the package README](./README.md) and at <https://searchstack.dev/reference>.
 
-## What SearchStack does
+## The other clients
 
-- **One query, several kinds of matching** — keyword, semantic (vector), geo-radius and image
-  similarity against the same records, without standing up separate engines.
-- **Relevance you can test** — pinned relevance evals and LLM judges score whether the results an
-  agent gets back are actually right, so a ranking change is a measurement rather than a hunch.
-- **Built for agents** — a hosted [MCP server](https://mcp.searchstack.dev) exposes the same surface
-  as tools, so Claude, ChatGPT, Cursor or Copilot can search and manage your data directly. Every
-  tool here has a matching HTTP endpoint; nothing is agent-only.
-- **Facets, groups, synonyms, query rules and feeds** — the ordinary catalogue-search machinery,
-  managed through the same API.
+- [`@searchstack/public-api`](https://github.com/searchstack-dev/searchstack-public-api) — TypeScript
+- [`@searchstack/autocomplete`](https://github.com/searchstack-dev/searchstack-autocomplete) — browser search UI
 
-## Using it with an agent
+## Agents
 
-Point any MCP client at `https://mcp.searchstack.dev/` and sign in, or pass an API key header. See
-[Use with Claude](https://searchstack.dev/learn/use-with-claude),
-[Cursor](https://searchstack.dev/learn/use-with-cursor) or
-[Copilot](https://searchstack.dev/learn/use-with-copilot).
-
-The API is self-describing: `https://api.searchstack.dev/api/info` and `/api/examples` return an
-always-current manifest and worked examples, so a tool can learn the surface at runtime.
+A hosted [MCP server](https://mcp.searchstack.dev) exposes the same surface as tools, so Claude,
+ChatGPT, Cursor or Copilot can search and manage your data directly. Every tool has a matching HTTP
+endpoint; nothing is agent-only.
 
 ## Docs and support
 
-- Reference: <https://searchstack.dev/reference>
-- Support: <https://searchstack.dev/support>
-- Status: <https://status.searchstack.dev>
+Reference <https://searchstack.dev/reference> · Support <https://searchstack.dev/support> ·
+Status <https://status.searchstack.dev>
 
-## Licences
-
-The packages keep the licences they publish under: `@searchstack/public-api` and
-`SearchStack.PublicApi` are ISC, `@searchstack/autocomplete` is MIT. Each package directory carries
-its own `LICENSE`.
-
-© Retriv, Inc
+Licensed ISC. © Retriv, Inc
