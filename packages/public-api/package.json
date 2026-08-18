@@ -1,0 +1,64 @@
+{
+  "name": "@searchstack/public-api",
+  "version": "5.0.0",
+  "description": "TypeScript client for the Search Stack public API. A typed, fetch-based wrapper that authenticates with an API key or access token and covers the full public surface.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://searchstack.dev",
+  "bugs": {
+    "url": "https://searchstack.dev/support"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsc -p tsconfig.json",
+    "postbuild": "pwsh -NoProfile -File ../.claude/scripts/npm-publish.ps1 -Package searchstack-public-api -FromBuild || exit 0",
+    "prepublishOnly": "npm run clean && npm run build",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "search",
+    "search-api",
+    "semantic-search",
+    "vector-search",
+    "hybrid-search",
+    "full-text-search",
+    "faceted-search",
+    "geo-search",
+    "image-search",
+    "search-engine",
+    "typeahead",
+    "autocomplete",
+    "mcp",
+    "api-client",
+    "typescript",
+    "searchstack"
+  ],
+  "author": "searchstack",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3",
+    "vitest": "^2.1.9"
+  }
+}

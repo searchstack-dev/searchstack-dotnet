@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- netstandard2.0 reaches .NET Framework 4.6.1+, Mono, Xamarin, Unity; net8.0 gets the in-box System.Text.Json (no extra package). -->
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RootNamespace>SearchStack.PublicApi</RootNamespace>
+    <AssemblyName>SearchStack.PublicApi</AssemblyName>
+    <!-- Self-contained, publishable package: pin its own dependency version rather
+         than inheriting the repo's central package management. -->
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <!-- Published NuGet package with its OWN release cadence, decoupled from the repo-wide `v`
+         release tags. The version is set explicitly (<Version> below) — bump it in the same PR that
+         changes the client. UseMinVer=false opts out of the shared MinVer wiring in
+         Directory.Build.props: that file would otherwise add a version-less MinVer ref, which fails
+         to restore here because central package management is off for this project. -->
+    <UseMinVer>false</UseMinVer>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- DTO properties are self-describing; don't require a doc comment on each. -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <!-- NuGet package metadata -->
+    <IsPackable>true</IsPackable>
+    <PackageId>SearchStack.PublicApi</PackageId>
+    <Authors>SearchStack</Authors>
+    <Company>SearchStack</Company>
+    <Copyright>Copyright © 2026 SearchStack</Copyright>
+    <Description>Typed, HttpClient-based .NET client for the Search Stack public API. Authenticates with an API key or an access token and covers the full public surface. The C# counterpart of the @searchstack/public-api TypeScript package.</Description>
+    <PackageTags>search;search-api;semantic-search;vector-search;hybrid-search;full-text-search;faceted-search;geo-search;image-search;search-engine;typeahead;autocomplete;mcp;api-client;dotnet;csharp;searchstack</PackageTags>
+    <PackageLicenseExpression>ISC</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://searchstack.dev</PackageProjectUrl>
+    <!-- 3.3.0 — ADDITIVE: `client.Ask`, a grounded, cited answer over the account's own records, with the
+         records each claim came from. Purely additive; no existing type changes shape.
+         3.2.0 — ADDITIVE: list-level gates. GateResponse gains owner_list, CreateGateRequest gains
+         list_name, and ListAsync gains an optional scope argument. Nothing existing breaks: every gate that
+         exists today is account-wide, so no caller sees one disappear from the listing until it creates one
+         that belongs to a list.
+         3.1.0 — ADDITIVE: FieldReaders (hit.Text / hit.Values / hit.Number), so reading a field no longer
+         means handling a JsonElement or knowing how many values the field holds. Nothing existing changes
+         shape, hence a minor.
+         3.0.0 was MAJOR, not minor: a facet's value in a search result became always an array, so every
+         caller reading one as a scalar broke — which is the definition of the bump. Facet cardinality
+         landed with it, and 3.1.0's readers are what make that shape comfortable to consume.
+         3.4.0 adds Account.GetHealthAsync — "is anything wrong with my account right now?"
+         (docs/account-health-plan.md M4). Minor: purely additive, no existing shape changes.
+         4.0.0 — BREAKING: the group IP allow-list is gone. Groups.AddIpAddressAsync /
+         RemoveIpAddressAsync, AddGroupIpAddressRequest and the IpAddresses field on ListResponse and
+         GroupResponse are removed; the API never enforced the list, so nothing else changes. -->
+    <Version>4.0.0</Version>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageIcon>icon1.png</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Icon lives in the project (repo-relative) so pack works on CI and any clone, not just one machine. -->
+    <None Include="icon1.png" Pack="true" PackagePath="\" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- System.Text.Json is in-box on net8.0; only netstandard2.0 needs the package.
+       8.0+ is required for JsonNamingPolicy.SnakeCaseLower. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
+  </ItemGroup>
+
+</Project>
